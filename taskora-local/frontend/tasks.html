@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Tasks — Taskora</title>
+    <meta name="description" content="Tambah, edit, hapus, dan tandai tugas selesai lengkap dengan prioritas serta deadline." />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="sidebar" id="sidebar"></nav>
+      <div class="main">
+        <header class="topbar">
+          <strong>My Tasks</strong>
+          <div id="topbar-user" style="display:flex;align-items:center;gap:16px"></div>
+        </header>
+        <main class="content">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <h1 class="page-title">My Tasks</h1>
+              <p class="page-sub" id="task-count">Memuat…</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="filter-status" style="width:auto">
+                <option value="">Semua status</option>
+                <option value="pending">Belum selesai</option>
+                <option value="done">Selesai</option>
+              </select>
+              <select id="filter-priority" style="width:auto">
+                <option value="">Semua prioritas</option>
+                <option value="high">Tinggi</option>
+                <option value="medium">Sedang</option>
+                <option value="low">Rendah</option>
+              </select>
+              <button class="btn" id="add-task">+ Tambah Tugas</button>
+            </div>
+          </div>
+          <div id="task-list"></div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal" id="task-modal">
+      <div class="modal__box">
+        <h3 id="task-modal-title">Tambah Tugas</h3>
+        <form id="task-form">
+          <div class="field">
+            <label for="title">Judul Tugas</label>
+            <input id="title" name="title" required placeholder="Tugas Matematika Bab 3" />
+          </div>
+          <div class="field">
+            <label for="description">Deskripsi</label>
+            <textarea id="description" name="description" placeholder="Detail tugas…"></textarea>
+          </div>
+          <div class="grid grid--2">
+            <div class="field">
+              <label for="deadline">Deadline</label>
+              <input id="deadline" name="deadline" type="datetime-local" />
+            </div>
+            <div class="field">
+              <label for="priority">Prioritas</label>
+              <select id="priority" name="priority">
+                <option value="high">Tinggi</option>
+                <option value="medium" selected>Sedang</option>
+                <option value="low">Rendah</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal__actions">
+            <button type="button" class="btn btn--ghost" data-close>Batal</button>
+            <button type="submit" class="btn">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="detail-modal">
+      <div class="modal__box">
+        <h3>Detail Tugas</h3>
+        <div id="detail-body"></div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" data-close>Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/tasks.js"></script>
+  </body>
+</html>
