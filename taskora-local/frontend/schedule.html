@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schedule — Taskora</title>
+    <meta name="description" content="Kelola jadwal pelajaran mingguan Senin sampai Sabtu di Taskora." />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="sidebar" id="sidebar"></nav>
+      <div class="main">
+        <header class="topbar">
+          <strong>Schedule</strong>
+          <div id="topbar-user" style="display:flex;align-items:center;gap:16px"></div>
+        </header>
+        <main class="content">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <h1 class="page-title">Jadwal Mingguan</h1>
+              <p class="page-sub">Atur jadwal pelajaranmu Senin sampai Sabtu.</p>
+            </div>
+            <button class="btn" id="add-schedule">+ Tambah Jadwal</button>
+          </div>
+          <div class="grid grid--3" id="days"></div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal" id="schedule-modal">
+      <div class="modal__box">
+        <h3 id="schedule-modal-title">Tambah Jadwal</h3>
+        <form id="schedule-form">
+          <div class="field">
+            <label for="day">Hari</label>
+            <select id="day" name="day_of_week"></select>
+          </div>
+          <div class="field">
+            <label for="subject">Mata Pelajaran</label>
+            <input id="subject" name="subject" required placeholder="Matematika" />
+          </div>
+          <div class="grid grid--2">
+            <div class="field">
+              <label for="start">Waktu Mulai</label>
+              <input id="start" name="start_time" type="time" required />
+            </div>
+            <div class="field">
+              <label for="end">Waktu Selesai</label>
+              <input id="end" name="end_time" type="time" required />
+            </div>
+          </div>
+          <div class="modal__actions">
+            <button type="button" class="btn btn--ghost" data-close>Batal</button>
+            <button type="submit" class="btn">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/schedule.js"></script>
+  </body>
+</html>
