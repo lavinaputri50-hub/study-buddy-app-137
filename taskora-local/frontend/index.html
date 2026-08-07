@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login — Taskora</title>
+    <meta name="description" content="Masuk ke Taskora untuk mengatur jadwal belajar, tugas, dan progres penyelesaian tugasmu." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="auth">
+      <section class="auth__art">
+        <h1>Taskora</h1>
+        <p>Study Planner &amp; Task Management untuk pelajar dan mahasiswa. Atur jadwal, kelola tugas, dan pantau progres belajarmu dalam satu tempat.</p>
+      </section>
+
+      <section class="auth__panel">
+        <div class="auth__card">
+          <h2 id="auth-title">Selamat datang kembali</h2>
+          <p id="auth-subtitle">Masuk untuk melanjutkan rencana belajarmu.</p>
+
+          <form id="auth-form">
+            <div class="field" id="name-field" hidden>
+              <label for="name">Nama</label>
+              <input id="name" name="name" type="text" placeholder="Nama lengkap" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="nama@email.com" />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" required minlength="6" placeholder="••••••••" />
+            </div>
+            <button class="btn btn--block" id="auth-submit" type="submit">Login</button>
+          </form>
+
+          <p class="auth__switch">
+            <span id="auth-switch-text">Belum punya akun?</span>
+            <button type="button" id="auth-switch-btn">Daftar</button>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div id="toast"></div>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
