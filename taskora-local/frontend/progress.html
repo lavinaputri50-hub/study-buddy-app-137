@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progress — Taskora</title>
+    <meta name="description" content="Pantau persentase penyelesaian tugas dan statistik produktivitas belajarmu." />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="sidebar" id="sidebar"></nav>
+      <div class="main">
+        <header class="topbar">
+          <strong>Progress</strong>
+          <div id="topbar-user" style="display:flex;align-items:center;gap:16px"></div>
+        </header>
+        <main class="content">
+          <h1 class="page-title">Progress</h1>
+          <p class="page-sub">Ringkasan produktivitas belajarmu.</p>
+
+          <div class="grid grid--2" style="margin-bottom:18px">
+            <div class="card" style="text-align:center">
+              <svg viewBox="0 0 120 120" width="180" height="180" style="transform:rotate(-90deg)">
+                <circle cx="60" cy="60" r="54" fill="none" stroke="#efeaff" stroke-width="12" />
+                <circle id="ring" cx="60" cy="60" r="54" fill="none" stroke="#6c4df6" stroke-width="12"
+                        stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="339.29"
+                        style="transition:stroke-dashoffset .8s ease" />
+              </svg>
+              <p style="font-size:32px;font-weight:700;margin-top:-110px" id="ring-label">0%</p>
+              <p class="stat__label" style="margin-top:78px">Penyelesaian tugas</p>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-bottom:14px">Statistik per Prioritas</h3>
+              <div id="bars"></div>
+            </div>
+          </div>
+
+          <div class="grid grid--3">
+            <div class="card"><p class="stat__label">Tugas Selesai</p><p class="stat__value" id="p-done">0</p></div>
+            <div class="card"><p class="stat__label">Belum Selesai</p><p class="stat__value" id="p-pending">0</p></div>
+            <div class="card"><p class="stat__label">Total Tugas</p><p class="stat__value" id="p-total">0</p></div>
+          </div>
+
+          <div class="card" style="margin-top:18px;background:linear-gradient(135deg,#6c4df6,#9a7bff);color:#fff;border:0">
+            <p style="font-weight:600" id="motivation">Sedikit demi sedikit, lama-lama selesai juga.</p>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div id="toast"></div>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/progress.js"></script>
+  </body>
+</html>
