@@ -7,6 +7,8 @@ import {
   Settings,
   LogOut,
   GraduationCap,
+  Users,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +16,8 @@ export const NAV_ITEMS = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Schedule", url: "/schedule", icon: CalendarDays },
   { title: "Tasks", url: "/tasks", icon: ListChecks },
+  { title: "Study Groups", url: "/groups", icon: Users },
+  { title: "Study Room", url: "/rooms", icon: Timer },
   { title: "Progress", url: "/progress", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ] as const;
