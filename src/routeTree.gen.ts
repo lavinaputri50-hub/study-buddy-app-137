@@ -17,6 +17,7 @@ import { Route as AppScheduleRouteImport } from './routes/_app/schedule'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppGroupsIndexRouteImport } from './routes/_app/groups/index'
 import { Route as AppGroupsGroupIdRouteImport } from './routes/_app/groups/$groupId'
+import { Route as AppRoomsIndexRouteImport } from './routes/_app/rooms/index'
 import { Route as AppTasksIndexRouteImport } from './routes/_app/tasks/index'
 import { Route as AppTasksTaskIdRouteImport } from './routes/_app/tasks/$taskId'
 
@@ -59,6 +60,11 @@ const AppGroupsGroupIdRoute = AppGroupsGroupIdRouteImport.update({
   path: '/groups/$groupId',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppRoomsIndexRoute = AppRoomsIndexRouteImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppTasksIndexRoute = AppTasksIndexRouteImport.update({
   id: '/tasks/',
   path: '/tasks/',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/groups/': typeof AppGroupsIndexRoute
+  '/rooms/': typeof AppRoomsIndexRoute
   '/tasks/': typeof AppTasksIndexRoute
 }
 export interface FileRoutesByTo {
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/groups': typeof AppGroupsIndexRoute
+  '/rooms': typeof AppRoomsIndexRoute
   '/tasks': typeof AppTasksIndexRoute
 }
 export interface FileRoutesById {
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/_app/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/_app/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/_app/groups/': typeof AppGroupsIndexRoute
+  '/_app/rooms/': typeof AppRoomsIndexRoute
   '/_app/tasks/': typeof AppTasksIndexRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/groups/$groupId'
     | '/tasks/$taskId'
     | '/groups/'
+    | '/rooms/'
     | '/tasks/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/groups/$groupId'
     | '/tasks/$taskId'
     | '/groups'
+    | '/rooms'
     | '/tasks'
   id:
     | '__root__'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/_app/groups/$groupId'
     | '/_app/tasks/$taskId'
     | '/_app/groups/'
+    | '/_app/rooms/'
     | '/_app/tasks/'
   fileRoutesById: FileRoutesById
 }
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGroupsGroupIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/rooms/': {
+      id: '/_app/rooms/'
+      path: '/rooms'
+      fullPath: '/rooms/'
+      preLoaderRoute: typeof AppRoomsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/tasks/': {
       id: '/_app/tasks/'
       path: '/tasks'
@@ -230,6 +249,7 @@ interface AppRouteRouteChildren {
   AppGroupsGroupIdRoute: typeof AppGroupsGroupIdRoute
   AppTasksTaskIdRoute: typeof AppTasksTaskIdRoute
   AppGroupsIndexRoute: typeof AppGroupsIndexRoute
+  AppRoomsIndexRoute: typeof AppRoomsIndexRoute
   AppTasksIndexRoute: typeof AppTasksIndexRoute
 }
 
@@ -241,6 +261,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppGroupsGroupIdRoute: AppGroupsGroupIdRoute,
   AppTasksTaskIdRoute: AppTasksTaskIdRoute,
   AppGroupsIndexRoute: AppGroupsIndexRoute,
+  AppRoomsIndexRoute: AppRoomsIndexRoute,
   AppTasksIndexRoute: AppTasksIndexRoute,
 }
 
