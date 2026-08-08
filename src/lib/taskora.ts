@@ -30,6 +30,84 @@ export interface Profile {
   theme: string;
 }
 
+export interface StudyGroup {
+  id: string;
+  name: string;
+  description: string | null;
+  code: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface GroupMember {
+  id: string;
+  group_id: string;
+  user_id: string;
+  role: string;
+  joined_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
+export interface SharedTask {
+  id: string;
+  group_id: string;
+  title: string;
+  description: string | null;
+  deadline: string | null;
+  priority: Priority;
+  assigned_to: string | null;
+  is_done: boolean;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GroupMessage {
+  id: string;
+  group_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
+export interface StudyRoom {
+  id: string;
+  group_id: string;
+  name: string;
+  room_date: string;
+  start_time: string;
+  duration_minutes: number;
+  target: string;
+  target_description: string | null;
+  is_completed: boolean;
+  started_at: string | null;
+  created_by: string;
+  created_at: string;
+}
+
+export interface RoomMember {
+  id: string;
+  room_id: string;
+  user_id: string;
+  progress: number;
+  joined_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
+export interface RoomComment {
+  id: string;
+  room_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
 export const DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] as const;
 
 export const PRIORITY_LABEL: Record<Priority, string> = {
