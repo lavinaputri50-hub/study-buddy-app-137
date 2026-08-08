@@ -16,6 +16,7 @@ import { Route as AppProgressRouteImport } from './routes/_app/progress'
 import { Route as AppScheduleRouteImport } from './routes/_app/schedule'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppGroupsIndexRouteImport } from './routes/_app/groups/index'
+import { Route as AppGroupsGroupIdRouteImport } from './routes/_app/groups/$groupId'
 import { Route as AppTasksIndexRouteImport } from './routes/_app/tasks/index'
 import { Route as AppTasksTaskIdRouteImport } from './routes/_app/tasks/$taskId'
 
@@ -53,6 +54,11 @@ const AppGroupsIndexRoute = AppGroupsIndexRouteImport.update({
   path: '/groups/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppGroupsGroupIdRoute = AppGroupsGroupIdRouteImport.update({
+  id: '/groups/$groupId',
+  path: '/groups/$groupId',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppTasksIndexRoute = AppTasksIndexRouteImport.update({
   id: '/tasks/',
   path: '/tasks/',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/progress': typeof AppProgressRoute
   '/schedule': typeof AppScheduleRoute
   '/settings': typeof AppSettingsRoute
+  '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/groups/': typeof AppGroupsIndexRoute
   '/tasks/': typeof AppTasksIndexRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/progress': typeof AppProgressRoute
   '/schedule': typeof AppScheduleRoute
   '/settings': typeof AppSettingsRoute
+  '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/groups': typeof AppGroupsIndexRoute
   '/tasks': typeof AppTasksIndexRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/_app/progress': typeof AppProgressRoute
   '/_app/schedule': typeof AppScheduleRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/_app/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/_app/groups/': typeof AppGroupsIndexRoute
   '/_app/tasks/': typeof AppTasksIndexRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/schedule'
     | '/settings'
+    | '/groups/$groupId'
     | '/tasks/$taskId'
     | '/groups/'
     | '/tasks/'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/schedule'
     | '/settings'
+    | '/groups/$groupId'
     | '/tasks/$taskId'
     | '/groups'
     | '/tasks'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/_app/progress'
     | '/_app/schedule'
     | '/_app/settings'
+    | '/_app/groups/$groupId'
     | '/_app/tasks/$taskId'
     | '/_app/groups/'
     | '/_app/tasks/'
@@ -186,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGroupsIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/groups/$groupId': {
+      id: '/_app/groups/$groupId'
+      path: '/groups/$groupId'
+      fullPath: '/groups/$groupId'
+      preLoaderRoute: typeof AppGroupsGroupIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/tasks/': {
       id: '/_app/tasks/'
       path: '/tasks'
@@ -208,6 +227,7 @@ interface AppRouteRouteChildren {
   AppProgressRoute: typeof AppProgressRoute
   AppScheduleRoute: typeof AppScheduleRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppGroupsGroupIdRoute: typeof AppGroupsGroupIdRoute
   AppTasksTaskIdRoute: typeof AppTasksTaskIdRoute
   AppGroupsIndexRoute: typeof AppGroupsIndexRoute
   AppTasksIndexRoute: typeof AppTasksIndexRoute
@@ -218,6 +238,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppProgressRoute: AppProgressRoute,
   AppScheduleRoute: AppScheduleRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppGroupsGroupIdRoute: AppGroupsGroupIdRoute,
   AppTasksTaskIdRoute: AppTasksTaskIdRoute,
   AppGroupsIndexRoute: AppGroupsIndexRoute,
   AppTasksIndexRoute: AppTasksIndexRoute,
