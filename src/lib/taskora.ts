@@ -57,6 +57,8 @@ export interface SharedTask {
   deadline: string | null;
   priority: Priority;
   assigned_to: string | null;
+  target: string | null;
+  status: string;
   is_done: boolean;
   created_by: string;
   created_at: string;
