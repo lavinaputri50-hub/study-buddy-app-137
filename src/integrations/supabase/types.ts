@@ -130,6 +130,47 @@ export type Database = {
         }
         Relationships: []
       }
+      shared_task_members: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          progress: number
+          status: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          progress?: number
+          status?: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          progress?: number
+          status?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_task_members_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "shared_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shared_tasks: {
         Row: {
           assigned_to: string | null
@@ -141,6 +182,8 @@ export type Database = {
           id: string
           is_done: boolean
           priority: Database["public"]["Enums"]["task_priority"]
+          status: string
+          target: string | null
           title: string
           updated_at: string
         }
@@ -154,6 +197,8 @@ export type Database = {
           id?: string
           is_done?: boolean
           priority?: Database["public"]["Enums"]["task_priority"]
+          status?: string
+          target?: string | null
           title: string
           updated_at?: string
         }
@@ -167,6 +212,8 @@ export type Database = {
           id?: string
           is_done?: boolean
           priority?: Database["public"]["Enums"]["task_priority"]
+          status?: string
+          target?: string | null
           title?: string
           updated_at?: string
         }
@@ -356,6 +403,111 @@ export type Database = {
           },
         ]
       }
+      task_activity: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "shared_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string | null
+          id: string
+          task_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number
+          file_type?: string | null
+          id?: string
+          task_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string | null
+          id?: string
+          task_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_attachments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "shared_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "shared_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           created_at: string
@@ -409,7 +561,16 @@ export type Database = {
         Args: { _room: string; _user: string }
         Returns: boolean
       }
+      is_task_admin: {
+        Args: { _task: string; _user: string }
+        Returns: boolean
+      }
+      is_task_member: {
+        Args: { _task: string; _user: string }
+        Returns: boolean
+      }
       shares_group: { Args: { _a: string; _b: string }; Returns: boolean }
+      task_group: { Args: { _task: string }; Returns: string }
     }
     Enums: {
       task_priority: "high" | "medium" | "low"
