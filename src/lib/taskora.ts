@@ -160,3 +160,107 @@ export function computeStats(tasks: Task[]) {
   const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
   return { total, completed, pending, progress };
 }
+
+/* --------------------------- shared task workspace -------------------------- */
+
+export type TaskStatus = "not_started" | "in_progress" | "completed" | "overdue";
+
+export interface SharedTaskMember {
+  id: string;
+  task_id: string;
+  user_id: string;
+  progress: number;
+  status: string;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
+export interface TaskAttachment {
+  id: string;
+  task_id: string;
+  uploaded_by: string;
+  file_name: string;
+  file_path: string;
+  file_type: string | null;
+  file_size: number;
+  created_at: string;
+  full_name?: string;
+}
+
+export interface TaskComment {
+  id: string;
+  task_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  full_name?: string;
+  avatar_url?: string | null;
+}
+
+export interface TaskActivity {
+  id: string;
+  task_id: string;
+  user_id: string;
+  action: string;
+  created_at: string;
+  full_name?: string;
+}
+
+export interface AppNotification {
+  id: string;
+  user_id: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
+  not_started: "Not Started",
+  in_progress: "In Progress",
+  completed: "Completed",
+  overdue: "Overdue",
+};
+
+/** Status efektif: overdue otomatis jika deadline lewat & belum selesai. */
+export function effectiveStatus(
+  status: string,
+  deadline: string | null,
+  progress: number,
+): TaskStatus {
+  if (status === "completed" || progress >= 100) return "completed";
+  if (deadline && new Date(deadline).getTime() < Date.now()) return "overdue";
+  if (progress > 0 || status === "in_progress") return "in_progress";
+  return "not_started";
+}
+
+export function averageProgress(values: number[]): number {
+  if (values.length === 0) return 0;
+  return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+}
+
+export function formatBytes(bytes: number): string {
+  if (!bytes) return "0 KB";
+  const units = ["B", "KB", "MB", "GB"];
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+export function fileKind(name: string): string {
+  const ext = name.split(".").pop()?.toUpperCase() ?? "FILE";
+  return ext.length > 5 ? "FILE" : ext;
+}
+
+export function relativeTime(value: string): string {
+  const diff = Date.now() - new Date(value).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "baru saja";
+  if (m < 60) return `${m} menit lalu`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} jam lalu`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d} hari lalu`;
+  return new Date(value).toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
+}
