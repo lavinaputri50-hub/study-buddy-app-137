@@ -395,3 +395,74 @@ export function useWorkspaceMutations(taskId: string, groupId: string | undefine
 
   return { join, setProgress, comment, upload, removeAttachment, updateTask, addMembers, removeMember };
 }
+
+/* ----------------------- create shared task (full flow) --------------------- */
+
+export interface CreateSharedTaskInput {
+  title: string;
+  description: string | null;
+  deadline: string | null;
+  priority: "high" | "medium" | "low";
+  target: string | null;
+  memberIds: string[];
+  files: File[];
+}
+
+/** Buat shared task lengkap: task → anggota → file → aktivitas → notifikasi. */
+export function useCreateSharedTask(groupId: string) {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateSharedTaskInput) => {
+      const { data: task, error } = await supabase
+        .from("shared_tasks")
+        .insert({
+          group_id: groupId,
+          created_by: user!.id,
+          title: input.title,
+          description: input.description,
+          deadline: input.deadline,
+          priority: input.priority,
+          target: input.target,
+          status: "not_started",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      const memberIds = [...new Set([...input.memberIds, user!.id])];
+      const { error: mErr } = await supabase
+        .from("shared_task_members")
+        .upsert(
+          memberIds.map((user_id) => ({ task_id: task.id, user_id })),
+          { onConflict: "task_id,user_id" },
+        );
+      if (mErr) throw mErr;
+
+      for (const file of input.files) {
+        const meta = await uploadTaskFile(groupId, task.id, file);
+        const { error: aErr } = await supabase.from("task_attachments").insert({
+          task_id: task.id,
+          uploaded_by: user!.id,
+          file_name: meta.name,
+          file_path: meta.path,
+          file_type: meta.type,
+          file_size: meta.size,
+        });
+        if (aErr) throw aErr;
+      }
+
+      await supabase
+        .from("task_activity")
+        .insert({ task_id: task.id, user_id: user!.id, action: "membuat shared task" });
+
+      await notifyGroup(groupId, `Shared task baru: ${input.title}`, user!.id);
+      return task.id as string;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["shared-tasks", groupId] });
+      qc.invalidateQueries({ queryKey: ["group-task-progress", groupId] });
+    },
+  });
+}
