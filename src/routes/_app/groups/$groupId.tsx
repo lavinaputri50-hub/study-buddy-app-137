@@ -148,88 +148,122 @@ function GroupDetailPage() {
 function SharedTasksTab({ groupId, isAdmin }: { groupId: string; isAdmin: boolean }) {
   const { data: tasks = [] } = useSharedTasks(groupId);
   const { data: members = [] } = useGroupMembers(groupId);
-  const { create, update, remove } = useSharedTaskMutations(groupId);
+  const { data: progressMap = {} } = useGroupTaskProgress(groupId);
+  const { remove } = useSharedTaskMutations(groupId);
+  const create = useCreateSharedTask(groupId);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
     deadline: "",
     priority: "medium" as Priority,
-    assigned_to: "none",
+    target: "",
   });
+  const [picked, setPicked] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
-  const done = tasks.filter((t) => t.is_done).length;
-  const percent = tasks.length === 0 ? 0 : Math.round((done / tasks.length) * 100);
+  const sorted = useMemo(
+    () =>
+      [...tasks].sort((a, b) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      }),
+    [tasks],
+  );
+
+  const overall = averageProgress(sorted.map((t) => progressMap[t.id]?.progress ?? 0));
+
+  function reset() {
+    setForm({ title: "", description: "", deadline: "", priority: "medium", target: "" });
+    setPicked([]);
+    setFiles([]);
+  }
 
   return (
     <div className="space-y-4">
       <div className="surface-card p-5">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Progress Grup</span>
-          <span className="font-semibold text-primary">{percent}%</span>
+          <span className="font-semibold text-primary">{overall}%</span>
         </div>
-        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="gradient-brand h-full rounded-full transition-all duration-500"
-            style={{ width: `${percent}%` }}
-          />
-        </div>
+        <ProgressBar value={overall} className="mt-3" />
         <p className="mt-2 text-xs text-muted-foreground">
-          {done} selesai · {tasks.length - done} belum selesai · {tasks.length} total
+          {sorted.filter((t) => t.is_done).length} selesai · {sorted.length} shared task
         </p>
       </div>
 
       {isAdmin && (
         <div className="flex justify-end">
           <Button onClick={() => setOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Shared Task
+            <Plus className="mr-2 h-4 w-4" /> Create Shared Task
           </Button>
         </div>
       )}
 
-      {tasks.length === 0 ? (
+      {sorted.length === 0 ? (
         <p className="surface-card p-8 text-center text-sm text-muted-foreground">
           Belum ada tugas bersama.
         </p>
       ) : (
-        <div className="surface-card divide-y">
-          {tasks.map((t) => (
-            <div key={t.id} className="flex items-start gap-3 p-4">
-              <Checkbox
-                checked={t.is_done}
-                onCheckedChange={(v) => update.mutate({ id: t.id, is_done: !!v })}
-                className="mt-1"
-              />
-              <div className="min-w-0 flex-1">
-                <p className={t.is_done ? "font-medium line-through opacity-60" : "font-medium"}>
-                  {t.title}
-                </p>
-                {t.description && (
-                  <p className="mt-0.5 text-sm text-muted-foreground">{t.description}</p>
-                )}
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatDeadline(t.deadline)}</span>
-                  <PriorityBadge priority={t.priority} />
-                  <StatusBadge done={t.is_done} />
-                  {t.assigned_to && (
-                    <Badge variant="outline">
-                      {members.find((m) => m.user_id === t.assigned_to)?.full_name ?? "Anggota"}
-                    </Badge>
+        <div className="grid gap-4 md:grid-cols-2">
+          {sorted.map((t) => {
+            const p = progressMap[t.id]?.progress ?? 0;
+            const status = effectiveStatus(t.status, t.deadline, p);
+            return (
+              <div key={t.id} className="surface-card space-y-3 p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <Link
+                    to="/workspace/$taskId"
+                    params={{ taskId: t.id }}
+                    className="min-w-0 flex-1 font-medium hover:text-primary"
+                  >
+                    {t.title}
+                  </Link>
+                  {isAdmin && (
+                    <Button variant="ghost" size="icon" onClick={() => remove.mutate(t.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   )}
                 </div>
+                {t.description && (
+                  <p className="line-clamp-2 text-sm text-muted-foreground">{t.description}</p>
+                )}
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <TaskStatusBadge status={status} />
+                  <PriorityBadge priority={t.priority} />
+                  <span>{formatDeadline(t.deadline)}</span>
+                </div>
+                {t.target && <p className="text-xs text-muted-foreground">Target: {t.target}</p>}
+                <div className="flex items-center gap-2">
+                  <ProgressBar value={p} className="h-2" />
+                  <span className="w-10 text-right text-xs text-muted-foreground">{p}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    <Users className="mr-1 inline h-3 w-3" />
+                    {progressMap[t.id]?.members ?? 0} mengerjakan
+                  </span>
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/workspace/$taskId" params={{ taskId: t.id }}>
+                      Buka Workspace
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              {isAdmin && (
-                <Button variant="ghost" size="icon" onClick={() => remove.mutate(t.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) reset();
+        }}
+      >
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Shared Task Baru</DialogTitle>
           </DialogHeader>
@@ -243,7 +277,7 @@ function SharedTasksTab({ groupId, isAdmin }: { groupId: string; isAdmin: boolea
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="st-desc">Deskripsi</Label>
+              <Label htmlFor="st-desc">Deskripsi / Instruksi</Label>
               <Textarea
                 id="st-desc"
                 value={form.description}
@@ -278,23 +312,52 @@ function SharedTasksTab({ groupId, isAdmin }: { groupId: string; isAdmin: boolea
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Assign to</Label>
-              <Select
-                value={form.assigned_to}
-                onValueChange={(v) => setForm({ ...form, assigned_to: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih anggota" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Semua anggota</SelectItem>
-                  {members.map((m) => (
-                    <SelectItem key={m.user_id} value={m.user_id}>
+              <Label htmlFor="st-target">Target pengerjaan</Label>
+              <Input
+                id="st-target"
+                placeholder="Mis. soal 1-20 atau halaman 1-15"
+                value={form.target}
+                onChange={(e) => setForm({ ...form, target: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="st-file">File tugas / materi</Label>
+              <Input
+                id="st-file"
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              />
+              {files.length > 0 && (
+                <p className="text-xs text-muted-foreground">{files.length} file dipilih</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Anggota yang ikut</Label>
+              <div className="flex flex-wrap gap-2">
+                {members.map((m) => {
+                  const active = picked.includes(m.user_id);
+                  return (
+                    <button
+                      key={m.user_id}
+                      type="button"
+                      onClick={() =>
+                        setPicked((prev) =>
+                          active ? prev.filter((id) => id !== m.user_id) : [...prev, m.user_id],
+                        )
+                      }
+                      className={
+                        active
+                          ? "rounded-full border border-primary bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                          : "rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-accent"
+                      }
+                    >
                       {m.full_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <DialogFooter>
@@ -307,26 +370,22 @@ function SharedTasksTab({ groupId, isAdmin }: { groupId: string; isAdmin: boolea
                     description: form.description.trim() || null,
                     deadline: form.deadline ? new Date(form.deadline).toISOString() : null,
                     priority: form.priority,
-                    assigned_to: form.assigned_to === "none" ? null : form.assigned_to,
+                    target: form.target.trim() || null,
+                    memberIds: picked,
+                    files,
                   },
                   {
                     onSuccess: () => {
                       toast.success("Shared task dibuat");
                       setOpen(false);
-                      setForm({
-                        title: "",
-                        description: "",
-                        deadline: "",
-                        priority: "medium",
-                        assigned_to: "none",
-                      });
+                      reset();
                     },
                     onError: (e) => toast.error(e.message),
                   },
                 )
               }
             >
-              Simpan
+              {create.isPending ? "Menyimpan…" : "Create Task"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -334,6 +393,7 @@ function SharedTasksTab({ groupId, isAdmin }: { groupId: string; isAdmin: boolea
     </div>
   );
 }
+
 
 /* ----------------------------------- chat ---------------------------------- */
 
