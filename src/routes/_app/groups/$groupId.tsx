@@ -13,14 +13,15 @@ import {
   useCreateRoom,
 } from "@/hooks/use-collab-data";
 import { useAuth } from "@/hooks/use-auth";
-import { PriorityBadge, StatusBadge } from "@/components/taskora/Badges";
-import { formatDeadline, type Priority } from "@/lib/taskora";
+import { useCreateSharedTask, useGroupTaskProgress } from "@/hooks/use-shared-task";
+import { PriorityBadge } from "@/components/taskora/Badges";
+import { ProgressBar, TaskStatusBadge } from "@/components/taskora/TaskStatusBadge";
+import { averageProgress, effectiveStatus, formatDeadline, type Priority } from "@/lib/taskora";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {

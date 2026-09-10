@@ -26,7 +26,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { isUrgent, formatDeadline } from "@/lib/taskora";
+import { isUrgent, formatDeadline, relativeTime } from "@/lib/taskora";
+import { useNotifications, useMarkNotificationsRead } from "@/hooks/use-shared-task";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_app")({
@@ -122,36 +123,55 @@ function AppLayout() {
 
 function NotificationBell() {
   const { data: tasks = [] } = useTasks();
+  const { data: notifications = [] } = useNotifications();
+  const markRead = useMarkNotificationsRead();
   const urgent = tasks.filter(isUrgent);
+  const unread = notifications.filter((n) => !n.is_read).length;
+  const count = unread + urgent.length;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open && unread > 0) markRead.mutate();
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
-          {urgent.length > 0 && (
+          {count > 0 && (
             <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
-              {urgent.length}
+              {count}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 rounded-2xl">
-        <DropdownMenuLabel>Notifikasi Deadline</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="max-h-96 w-80 overflow-y-auto rounded-2xl">
+        <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {urgent.length === 0 ? (
+        {count === 0 && (
           <p className="px-2 py-4 text-center text-sm text-muted-foreground">
-            Tidak ada deadline mepet 🎉
+            Belum ada notifikasi 🎉
           </p>
-        ) : (
-          urgent.slice(0, 6).map((task) => (
-            <DropdownMenuItem key={task.id} className="flex-col items-start gap-0.5">
-              <span className="text-sm font-medium">{task.title}</span>
-              <span className="text-xs text-muted-foreground">
-                Deadline {formatDeadline(task.deadline)}
-              </span>
-            </DropdownMenuItem>
-          ))
+        )}
+        {notifications.slice(0, 8).map((n) => (
+          <DropdownMenuItem key={n.id} className="flex-col items-start gap-0.5">
+            <span className={n.is_read ? "text-sm" : "text-sm font-medium"}>{n.message}</span>
+            <span className="text-xs text-muted-foreground">{relativeTime(n.created_at)}</span>
+          </DropdownMenuItem>
+        ))}
+        {urgent.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Deadline Mepet</DropdownMenuLabel>
+            {urgent.slice(0, 6).map((task) => (
+              <DropdownMenuItem key={task.id} className="flex-col items-start gap-0.5">
+                <span className="text-sm font-medium">{task.title}</span>
+                <span className="text-xs text-muted-foreground">
+                  Deadline {formatDeadline(task.deadline)}
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
