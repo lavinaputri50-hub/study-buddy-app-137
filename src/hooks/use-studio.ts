@@ -705,16 +705,18 @@ export function useHeartbeat(workspaceId: string, note: string) {
   useEffect(() => {
     if (!workspaceId || !user) return;
     const ping = async () => {
-      await supabase.from("workspace_members").upsert(
-        {
-          workspace_id: workspaceId,
-          user_id: user.id,
-          role: "member",
-          activity_note: note,
-          last_active_at: new Date().toISOString(),
-        },
-        { onConflict: "workspace_id,user_id" },
-      );
+      const patch = { activity_note: note, last_active_at: new Date().toISOString() };
+      const { data: updated } = await supabase
+        .from("workspace_members")
+        .update(patch)
+        .eq("workspace_id", workspaceId)
+        .eq("user_id", user.id)
+        .select("id");
+      if (!updated || updated.length === 0) {
+        await supabase
+          .from("workspace_members")
+          .insert({ workspace_id: workspaceId, user_id: user.id, role: "member", ...patch });
+      }
     };
     void ping();
     const t = setInterval(ping, 60000);
