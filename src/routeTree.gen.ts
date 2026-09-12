@@ -19,6 +19,7 @@ import { Route as AppGroupsIndexRouteImport } from './routes/_app/groups/index'
 import { Route as AppGroupsGroupIdRouteImport } from './routes/_app/groups/$groupId'
 import { Route as AppRoomsIndexRouteImport } from './routes/_app/rooms/index'
 import { Route as AppRoomsRoomIdRouteImport } from './routes/_app/rooms/$roomId'
+import { Route as AppStudioWorkspaceIdRouteImport } from './routes/_app/studio/$workspaceId'
 import { Route as AppTasksIndexRouteImport } from './routes/_app/tasks/index'
 import { Route as AppTasksTaskIdRouteImport } from './routes/_app/tasks/$taskId'
 import { Route as AppWorkspaceTaskIdRouteImport } from './routes/_app/workspace/$taskId'
@@ -72,6 +73,11 @@ const AppRoomsRoomIdRoute = AppRoomsRoomIdRouteImport.update({
   path: '/rooms/$roomId',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppStudioWorkspaceIdRoute = AppStudioWorkspaceIdRouteImport.update({
+  id: '/studio/$workspaceId',
+  path: '/studio/$workspaceId',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppTasksIndexRoute = AppTasksIndexRouteImport.update({
   id: '/tasks/',
   path: '/tasks/',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AppSettingsRoute
   '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/rooms/$roomId': typeof AppRoomsRoomIdRoute
+  '/studio/$workspaceId': typeof AppStudioWorkspaceIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/workspace/$taskId': typeof AppWorkspaceTaskIdRoute
   '/groups/': typeof AppGroupsIndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AppSettingsRoute
   '/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/rooms/$roomId': typeof AppRoomsRoomIdRoute
+  '/studio/$workspaceId': typeof AppStudioWorkspaceIdRoute
   '/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/workspace/$taskId': typeof AppWorkspaceTaskIdRoute
   '/groups': typeof AppGroupsIndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/_app/settings': typeof AppSettingsRoute
   '/_app/groups/$groupId': typeof AppGroupsGroupIdRoute
   '/_app/rooms/$roomId': typeof AppRoomsRoomIdRoute
+  '/_app/studio/$workspaceId': typeof AppStudioWorkspaceIdRoute
   '/_app/tasks/$taskId': typeof AppTasksTaskIdRoute
   '/_app/workspace/$taskId': typeof AppWorkspaceTaskIdRoute
   '/_app/groups/': typeof AppGroupsIndexRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/groups/$groupId'
     | '/rooms/$roomId'
+    | '/studio/$workspaceId'
     | '/tasks/$taskId'
     | '/workspace/$taskId'
     | '/groups/'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/groups/$groupId'
     | '/rooms/$roomId'
+    | '/studio/$workspaceId'
     | '/tasks/$taskId'
     | '/workspace/$taskId'
     | '/groups'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/_app/settings'
     | '/_app/groups/$groupId'
     | '/_app/rooms/$roomId'
+    | '/_app/studio/$workspaceId'
     | '/_app/tasks/$taskId'
     | '/_app/workspace/$taskId'
     | '/_app/groups/'
@@ -255,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRoomsRoomIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/studio/$workspaceId': {
+      id: '/_app/studio/$workspaceId'
+      path: '/studio/$workspaceId'
+      fullPath: '/studio/$workspaceId'
+      preLoaderRoute: typeof AppStudioWorkspaceIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/tasks/': {
       id: '/_app/tasks/'
       path: '/tasks'
@@ -286,6 +305,7 @@ interface AppRouteRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppGroupsGroupIdRoute: typeof AppGroupsGroupIdRoute
   AppRoomsRoomIdRoute: typeof AppRoomsRoomIdRoute
+  AppStudioWorkspaceIdRoute: typeof AppStudioWorkspaceIdRoute
   AppTasksTaskIdRoute: typeof AppTasksTaskIdRoute
   AppWorkspaceTaskIdRoute: typeof AppWorkspaceTaskIdRoute
   AppGroupsIndexRoute: typeof AppGroupsIndexRoute
@@ -300,6 +320,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppGroupsGroupIdRoute: AppGroupsGroupIdRoute,
   AppRoomsRoomIdRoute: AppRoomsRoomIdRoute,
+  AppStudioWorkspaceIdRoute: AppStudioWorkspaceIdRoute,
   AppTasksTaskIdRoute: AppTasksTaskIdRoute,
   AppWorkspaceTaskIdRoute: AppWorkspaceTaskIdRoute,
   AppGroupsIndexRoute: AppGroupsIndexRoute,
