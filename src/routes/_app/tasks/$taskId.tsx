@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, CalendarClock, Flag, CheckCircle2, FileText } from "lucide-react";
 import { PriorityBadge, StatusBadge } from "@/components/taskora/Badges";
+import { WorkOnTaskButton } from "@/components/taskora/WorkOnTaskButton";
 import { useTasks } from "@/hooks/use-taskora-data";
 import { formatDeadline } from "@/lib/taskora";
 
@@ -50,6 +51,19 @@ function TaskDetailPage() {
               <StatusBadge done={task.is_done} />
               <PriorityBadge priority={task.priority} />
             </div>
+          </div>
+
+          <div className="rounded-2xl bg-primary/5 p-4">
+            <p className="text-sm font-medium">Kerjakan langsung di Taskora Studio</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Tulis jawaban, susun halaman, kumpulkan referensi, lalu ekspor hasilnya.
+            </p>
+            <WorkOnTaskButton
+              className="mt-3"
+              taskId={task.id}
+              title={task.title}
+              taskKind="personal"
+            />
           </div>
 
           <div className="space-y-1">
