@@ -385,8 +385,8 @@ function ElementRow({
   element: WorkspaceElement;
   onSave: (content: WorkspaceElement["content"]) => void;
   onDelete: () => void;
-  onUp?: () => void;
-  onDown?: () => void;
+  onUp?: (() => void) | undefined;
+  onDown?: (() => void) | undefined;
 }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [value, setValue] = useState(
@@ -397,7 +397,9 @@ function ElementRow({
         : (element.content.text ?? ""),
   );
 
-  useEffect(() => () => timer.current && clearTimeout(timer.current), []);
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
 
   function change(next: string) {
     setValue(next);
@@ -633,7 +635,7 @@ function CommentPanel({
   currentUserId,
 }: {
   workspaceId: string;
-  currentUserId?: string;
+  currentUserId?: string | undefined;
 }) {
   const { data: comments = [] } = useWorkspaceComments(workspaceId);
   const { add, resolve, remove } = useCommentMutations(workspaceId);

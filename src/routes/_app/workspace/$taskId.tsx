@@ -26,6 +26,7 @@ import {
 } from "@/hooks/use-shared-task";
 import { PriorityBadge } from "@/components/taskora/Badges";
 import { ProgressBar, TaskStatusBadge } from "@/components/taskora/TaskStatusBadge";
+import { WorkOnTaskButton } from "@/components/taskora/WorkOnTaskButton";
 import {
   averageProgress,
   effectiveStatus,
@@ -135,6 +136,16 @@ function WorkspacePage() {
               </div>
               <ProgressBar value={overall} />
             </div>
+            {task && (
+              <WorkOnTaskButton
+                className="w-full"
+                taskId={task.id}
+                title={task.title}
+                taskKind="shared"
+                groupId={task.group_id}
+                assignmentType="project"
+              />
+            )}
           </div>
 
           <AttachmentsCard
