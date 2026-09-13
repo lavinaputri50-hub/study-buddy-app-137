@@ -26,6 +26,7 @@ import {
 } from "@/hooks/use-shared-task";
 import { PriorityBadge } from "@/components/taskora/Badges";
 import { ProgressBar, TaskStatusBadge } from "@/components/taskora/TaskStatusBadge";
+import { WorkOnTaskButton } from "@/components/taskora/WorkOnTaskButton";
 import {
   averageProgress,
   effectiveStatus,
