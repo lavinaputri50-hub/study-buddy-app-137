@@ -34,7 +34,7 @@ export function WorkOnTaskButton({
       disabled={open.isPending || !taskId}
       onClick={() =>
         open.mutate(
-          { taskId, title, taskKind, groupId, assignmentType },
+          { taskId, title, taskKind, groupId: groupId ?? null, assignmentType: assignmentType ?? "note" },
           {
             onSuccess: (workspaceId) =>
               navigate({ to: "/studio/$workspaceId", params: { workspaceId } }),
